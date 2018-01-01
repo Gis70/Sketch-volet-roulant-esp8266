@@ -1,4 +1,4 @@
-/*
+/* Release du 01/01/2018 pour module electrodragon
  * SKETCH fonctionnant sur wemos D1 MINI POUR COMMANDE DE VOLET ROULANT FILAIRE AVEC RENVOI DE LA POSITION DU VOLET EN POURCENTAGE
  * HARD : https://www.jeedom.com/forum/viewtopic.php?f=185&t=25017&sid=c757bad46d600f07820dab2a45ec8b33
  * LIBRAIRIES : https://github.com/marvinroger/arduino-shutters V3 beta4 (voir bibliothèque IDE Arduino)
@@ -23,7 +23,7 @@
 #include <EEPROM.h>
 
 
-bool debug = false;  //Affiche sur la console si True
+bool debug = true;  //Affiche sur la console si True
 bool raz = false;   //Réinitialise la zone SPIFFS et WiFiManager si True
 long lastMsg = 0;
 long lastConnect = 0;
@@ -55,31 +55,32 @@ void saveConfigCallback () {
   shouldSaveConfig = true;
 }
 
-// NOMAGE MQTT
-#define relais1_topic "Volet/Cuisine/Relais1"
-#define relais2_topic "Volet/Cuisine/Relais2"
-#define entree1_topic "Volet/Cuisine/Entree1"
-#define entree2_topic "Volet/Cuisine/Entree2"
-#define position_topic "Volet/Cuisine/Position"
-#define JeedomIn_topic "Volet/Cuisine/in"
-#define JeedomOut_topic "Volet/Cuisine/out"
-#define ESP8266Client "Volet_Cuisine" //Nom du peripherique sur le reseau
 
-//RELAIS 1    
-const int R1pin = 13;
+// NOMAGE MQTT
+#define relais1_topic "Volet/PFSalon/Relais1"
+#define relais2_topic "Volet/PFSalon/Relais2"
+#define entree1_topic "Volet/PFSalon/Entree1"
+#define entree2_topic "Volet/PFSalon/Entree2"
+#define position_topic "Volet/PFSalon/Position"
+#define JeedomIn_topic "Volet/PFSalon/in"
+#define JeedomOut_topic "Volet/PFSalon/out"
+#define ESP8266Client "Volet_PFSalon" //Nom du peripherique sur le reseau
+
+//RELAIS 1    peut être doit on les inverser
+const int R1pin = 13; // Relais Up
 //RELAIS 2
-const int R2pin = 12;
+const int R2pin = 12;  // Relais Down
 //ENTREE 1
-const int In1pin = 5;
+const int In1pin = 5; // Up
 //ENTREE 2
-const int In2pin = 4;
+const int In2pin = 4; // Down
 
 // VARIABLES
 
 char message_buff[100];
 
-WiFiClient espClientVolet_Cuisine;  // A renommer pour chaque volets
-PubSubClient client(espClientVolet_Cuisine); // A renommer pour chaque volets
+WiFiClient espClientVolet_PFSalon;  // A renommer pour chaque volets
+PubSubClient client(espClientVolet_PFSalon); // A renommer pour chaque volets
 
 //***********************************************************************************
 // FONCTIONS LIBRAIRIE position volets
@@ -137,6 +138,7 @@ Shutters shutters;
 // SETUP
 
 void setup() {
+  
   
   //SERIAL//
   Serial.begin(115200);
@@ -576,7 +578,7 @@ case 1:
    break;
 
 
-case 0:
+case 11:
    
    shutters.stop();
    //mqtt(); 
@@ -592,7 +594,7 @@ case 0:
       
    break;
 
-case 11:
+case 0:
 break;
 
 default: 
